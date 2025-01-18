@@ -33,7 +33,7 @@ namespace WorkflowCore.Services.BackgroundTasks
         {
             if (!await _lockProvider.AcquireLock(itemId, cancellationToken))
             {
-                Logger.LogInformation("Workflow locked {0}", itemId);
+                Logger.LogInformation("Workflow locked {ItemId}", itemId);
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace WorkflowCore.Services.BackgroundTasks
                     finally
                     {
                         WorkflowActivity.Enrich(result);
-                        await _persistenceStore.PersistWorkflow(workflow, result.Subscriptions, cancellationToken);
+                        await _persistenceStore.PersistWorkflow(workflow, result?.Subscriptions, cancellationToken);
                         await QueueProvider.QueueWork(itemId, QueueType.Index);
                         _greylist.Remove($"wf:{itemId}");
                     }
